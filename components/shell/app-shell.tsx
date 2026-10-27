@@ -90,7 +90,7 @@ function Clock() {
 
 function Topbar() {
   const { health, dockOpen, setDockOpen } = useAssistant();
-  const { role, actor } = useAlertOps();
+  const { role, actor, rejectedRole } = useAlertOps();
   const [menuOpen, setMenuOpen] = useState(false);
   const healthText =
     health?.status === "ok"
@@ -128,6 +128,7 @@ function Topbar() {
       <div className="ml-auto flex items-center gap-3">
         <span className="hidden text-[11px] text-muted-foreground lg:inline">
           {role === "operator" ? "值班员" : "观察员"} · {actor}
+          {rejectedRole ? <span className="ml-1 text-warn">（CCUS_ROLE={rejectedRole} 无法识别）</span> : null}
         </span>
         <StatusPill status={overallStatus()} className="hidden sm:inline-flex" />
         <span className={cn("hidden text-[11px] md:inline", health?.status === "offline" ? "text-alarm" : "text-muted-foreground")}>

@@ -129,12 +129,20 @@ export async function proxyJson(
     });
   } catch (error) {
     const timeout = isTimeout(error);
+    const approve = opts?.mode === "approve";
     return Response.json(
       {
         error: timeout ? "timeout" : "offline",
         message: timeout ? "连接 petro-rag-agent 超时。这次没有放行。" : offlineMessage(),
+        // 批准超时是最需要说清楚的一种：结果未知，而重试会把未知变成两次。
         recovery: timeout
-          ? ["确认上游还在响应，间隔后再试。", "不要把没有返回的线程当成已批准。"]
+          ? approve
+            ? [
+                "上游没有返回，这次批准的结果未知 —— 不能当成已通过，也不能当成没发生。",
+                "先去上游查这个 thread 的状态，再决定要不要重发。",
+                "不要直接再点一次批准：同一个 thread 批两次会覆盖第一次的意见。",
+              ]
+            : ["确认上游还在响应，间隔后再试。", "不要把没有返回的线程当成已批准。"]
           : offlineRecovery(),
         request_id: requestId,
       },

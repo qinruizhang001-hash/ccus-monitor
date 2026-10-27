@@ -1,6 +1,6 @@
 import { notHitlRecovery, VIEWER_APPROVE_MESSAGE } from "@/lib/ops/errors";
 import { requestIdFrom } from "@/lib/ops/request-id";
-import { opsSession } from "@/lib/ops/session";
+import { opsSession, denialMessage } from "@/lib/ops/session";
 import { petroConfig } from "@/lib/petro/config";
 import { mockApprove, mockRestore } from "@/lib/petro/mock";
 import { rewriteUpstream, withRequest } from "@/lib/petro/respond";
@@ -39,7 +39,11 @@ export async function POST(request: Request) {
   }
   if (body.approved && opsSession().role !== "operator") {
     return withRequest(
-      { error: "forbidden", message: VIEWER_APPROVE_MESSAGE, recovery: ["驳回仍可由观察员提交。通过只留给值班员。"] },
+      {
+        error: "forbidden",
+        message: denialMessage(VIEWER_APPROVE_MESSAGE),
+        recovery: ["驳回仍可由观察员提交。通过只留给值班员。"],
+      },
       requestId,
       403,
     );

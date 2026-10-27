@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { AlertList } from "@/components/dashboard/alert-list";
-import { useAlertOps } from "@/components/dashboard/alert-ops";
+import { useAlertOps, OpsIntegrityBanner } from "@/components/dashboard/alert-ops";
 import { ProvenanceMark } from "@/components/dashboard/provenance";
 import { ALERTS, sortedAlerts, type AlertStatus, type Severity } from "@/lib/telemetry";
 import { cn } from "@/lib/utils";
@@ -58,6 +58,7 @@ export function AlertsView() {
         </p>
         <ProvenanceMark where="告警" />
       </header>
+      <OpsIntegrityBanner />
       <div className="flex flex-wrap items-center gap-3 text-xs">
         <a className="text-primary hover:underline" href="/api/ops/alerts/export">
           导出 CSV

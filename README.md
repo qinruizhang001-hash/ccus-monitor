@@ -137,7 +137,7 @@ PETRO_RAG_MOCK=1
 | `OPENAI_API_KEY` | 主管使用的模型密钥。留空则本地按意图调用技能 |
 | `OPENAI_MODEL` | 默认 `gpt-4o-mini` |
 | `OPENAI_BASE_URL` | 可选，兼容 OpenAI 接口的网关 |
-| `CCUS_ROLE` | `operator`（默认）或 `viewer`。观察员不能批准 HITL，也不能确认严重告警 |
+| `CCUS_ROLE` | `operator`（默认）或 `viewer`。观察员不能批准 HITL，也不能确认严重告警。**写错的值一律按 `viewer` 处理**，见「权限」 |
 | `CCUS_OPERATOR_NAME` | 写进审计的名字，默认值班员 |
 | `CCUS_RISK_MIN_INTERVAL_MS` | 两次风险评估最短间隔，默认 20000 |
 | `PETRO_RAG_HITL_TTL_MS` | HITL 待确认时限，默认 30 分钟。超时拒绝批准，不会自动通过 |
@@ -181,15 +181,51 @@ curl -s http://127.0.0.1:3000/api/health
 `CCUS_ROLE=operator`：可以确认严重告警、静默、批准 HITL。  
 `CCUS_ROLE=viewer`：可以看、可以升级、可以驳回；批准和严重告警确认会 403。改角色后要重启 Next。
 
+**没设** `CCUS_ROLE` 走上面这个默认（operator）。**设了但认不出来**是另一回事：`operater`、`admin`、`值班员` 这些值一律按观察员处理，顶栏和告警页会显示「CCUS_ROLE=xxx 无法识别」。
+
+为什么不能兜底成 operator：一个想设成观察员的部署，因为少写一个字母，反而拿到批准 HITL 和确认严重告警的权力 —— 而这不会报错、不会写日志、界面上一切正常。认不出来的值和「没配」不是同一种状态，不能合并成一个分支。
+
 告警卡片获得焦点后：`A` 确认，`E` 升级，`S` 打开静默确认。静默必须写原因。严重告警还要勾选第二次核对，并输入告警编号，服务端核对 `confirm === 告警编号` 且 `secondConfirm === true`。默认静默 8 小时。到期后界面显示「静默已到期（日志未改写）」，不会回写旧行。静默不会清测点。
 
-审计文件是 `.data/alert-audit.jsonl`。每一行有 `seq`、`at`、`alertId`、`action`、`actor`、`role`、`note`、`silencedUntil`、`confirm`、`secondConfirm`、`prevHash`、`hash`。进程只追加，不改已写入的行。旧的 `.data/alert-ops.json` 若还在，且 jsonl 为空，会按时间顺序导入一次，原文件保留。
+审计文件是 `.data/alert-audit.jsonl`。每一行有 `seq`、`at`、`alertId`、`action`、`actor`、`role`、`note`、`silencedUntil`、`confirm`、`secondConfirm`、`prevHash`、`hash`。旧的 `.data/alert-ops.json` 若还在，且 jsonl 为空，会按时间顺序导入一次，原文件保留。
+
+#### 哈希链是校验过的，不只是写下来的
+
+写入时算 `sha256` 和 `prevHash` 只保证「写的时候是这样」。**读的时候必须重算**，否则那两列只是日志里的两串十六进制。`verifyChain()` 三条都查，缺一条就有一种篡改能通过：
+
+| 查什么 | 抓什么 |
+| --- | --- |
+| 重算摘要 | 改一行里的任何字段（例如把 `ack` 改成 `escalate`） |
+| `prevHash` 是否等于上一行的 `hash` | 换掉某行的 `hash`、掐头去尾 |
+| `seq` 是否从 1 连续递增 | 删掉一行、把两行换顺序 |
+
+三条都不通过时的行为：
+
+- `GET /api/ops/alerts` 的响应带 `chain: { ok, lines, malformed, brokenAt, reason }`。`chain` 为 `null` 表示还没读到，**不等于正常**。
+- 告警页顶部出现红色横幅，写明断在第几行、为什么。CSV 导出多一列 `audit_chain`，正常时是 `ok(12)`，断链时是 `broken@3`。
+- **拒绝继续追加**：往断链上再写一行，等于给前面所有行背书，新行的 `prevHash` 会指向最后一条「看起来有效」的行，断裂处被盖在中间，之后再也验不出来。处置请求会返回 500 `audit_chain_broken` 并说明怎么处理。
+- 读不出来的行（写到一半断电）计入 `malformed` 并指出行号，不会被当成空行跳过。审计链上「谁在什么时候基于什么理由做了什么」，坏行恰恰是最该被看见的那一行。
+
+链条坏了怎么办：先备份文件，再逐行核对。不要直接删掉坏行 —— 删掉也验不过，`seq` 会断。要重建，得从断点之后重算所有 `prevHash` 与 `hash`，并且明确记下这是一次重建。
 
 知识卡快照是 `ccus-notes-fixture-20261027`。演示遥测快照是 `demo-bx-ccus-20261026T1440+08`。助手正文里的数字必须能对上技能返回或这两份快照。对不上就写「未知/需接入数据源」。风险评估只转述 petro-rag-agent 或演示流返回的字段。质量闸门通过也不等于持证工程师签字。
 
+### 自检
+
 ```bash
-npm test
+npm run typecheck   # next typegen && tsc --noEmit
+npm run lint
+npm test            # 收集 lib/ app/ components/ 下的 *.test.ts
+npm run licenses    # 441 个依赖的许可证
+npm run build
+npm run verify      # 前三条一起跑
 ```
+
+`typecheck` 必须先 `next typegen`：Next 16 把 `LayoutProps<"/">` 这类全局类型写进 `.next/types`，干净检出里没有它，直接 `tsc --noEmit` 一定报 `TS2304`。这不是类型错误，是少跑了一步生成。
+
+测试共 56 项，覆盖：审计链的三条篡改路径与坏行计数、拒绝追加、HITL 状态机的每个出口（未登记 / 分析流 / 超时 410 / 已通过 409 / 失败态 409 / 驳回后可再批）、角色兜底方向、批准与流式评估「至多一次」、限频窗口、意图路由不会返回空技能表、质量衡算与羽流公式、出口数字核对。
+
+许可证审计在 441 个包里查强 copyleft（AGPL / GPL / SSPL）。这件事不会在 `npm install` 时报警，也不会出现在任何构建日志里，只会在分发打包产物的那天变成法务问题。
 
 ### 风险评估和 HITL
 
@@ -200,7 +236,11 @@ npm test
 5. 「发起人工复核」才登记 HITL，状态是待确认。驳回后仍可再确认。通过前界面会再问一次。
 6. 超过 `PETRO_RAG_HITL_TTL_MS` 变为超时，不能补批。
 
-令牌缺失或 401：核对服务端 `PETRO_RAG_API_TOKEN`，不要把令牌放到浏览器。上游在收到 HTTP 响应之后，批准请求**不再重试**，避免重复放行。健康检查和读取会按 0.4s、1.2s、2.8s 退避重试。
+令牌缺失或 401：核对服务端 `PETRO_RAG_API_TOKEN`，不要把令牌放到浏览器。
+
+批准请求**只发一次**，任何失败都不重试 —— 包括超时。超时的时候客户端没法区分「请求没到上游」和「到了、也执行了、只是响应没回来」，默认重试等于赌是前一种；赌错就是同一个 thread 被批两次。
+
+同样的规则适用于流式评估和发起 HITL：**超时和网络中断不重试**，只有收到 5xx 才重发（那种情况请求确实没被处理）。健康检查和读取则什么都会重试，按 0.4s、1.2s、2.8s 退避，因为读是幂等的。批准超时后的正确动作是去上游查这个 thread 的状态，不是再点一次。
 
 ### 备份
 

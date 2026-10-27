@@ -1,5 +1,5 @@
 import { connection } from "next/server";
-import { alertOpsMap, applyAlertAction, type AlertAction } from "@/lib/ops/alert-ops";
+import { alertOpsMap, applyAlertAction, verifyChain, type AlertAction } from "@/lib/ops/alert-ops";
 import { requestIdFrom } from "@/lib/ops/request-id";
 import { opsSession } from "@/lib/ops/session";
 import { withRequest } from "@/lib/petro/respond";
@@ -14,9 +14,14 @@ export async function GET(request: Request) {
     {
       role: session.role,
       actor: session.actor,
+      // 角色写错时把原值带出去。不发这个字段，前端就只能显示「当前是观察员」，
+      // 而用户以为配的是 operator —— 他会去查令牌、查上游，唯独不会想到是拼错了。
+      ...(session.rejectedRole ? { rejectedRole: session.rejectedRole } : {}),
       timezone: "Asia/Shanghai",
       provenance: "演示数据",
       records: alertOpsMap(),
+      // 有哈希，和哈希对得上，是两件事。这里把核对结果一起发出去。
+      chain: verifyChain(),
     },
     requestId,
   );

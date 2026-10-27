@@ -43,32 +43,35 @@ export async function POST(request: Request) {
     requestId,
   });
   if (!upstream.ok) {
-    const rewritten = await rewriteUpstream(upstream, requestId);
-    return rewritten;
+    return rewriteUpstream(upstream, requestId);
   }
   const rewritten = await rewriteUpstream(upstream, requestId);
-  const payload = (await rewritten.clone().json().catch(() => null)) as { thread_id?: string } | null;
-  if (payload?.thread_id) {
-    const thread = registerHitlThread(payload.thread_id, requestId, { input: userInput });
-    const bodyJson = (await rewritten.clone().json()) as Record<string, unknown>;
+  // 只解析一次。原来这里先 `.catch(() => null)` 解析一遍拿 thread_id，
+  // 再无条件 `await clone().json()` 解析第二遍 —— 上游返回非 JSON 时第二遍会抛，
+  // 于是线程已经登记了，客户端却收到一个没有 requestId、没有中文说明的 500。
+  const payload = (await rewritten.clone().json().catch(() => null)) as Record<string, unknown> | null;
+  const threadId = typeof payload?.thread_id === "string" ? payload.thread_id : "";
+  if (!threadId) {
     return withRequest(
       {
-        ...bodyJson,
-        thread_state: thread?.kind === "hitl" ? thread.phase : "failed",
-        expires_at: thread?.expiresAt,
-        recovery: thread?.kind === "hitl" ? [] : ["上游返回的线程已被记成分析流，不能批准。请重新发起 HITL。"],
+        error: "offline",
+        message: "HITL 没有返回 thread_id。这次没有进入待确认。",
+        recovery: offlineRecovery(),
       },
       requestId,
-      thread?.kind === "hitl" ? 200 : 409,
+      502,
     );
   }
+  const thread = registerHitlThread(threadId, requestId, { input: userInput });
+  const registered = thread?.kind === "hitl";
   return withRequest(
     {
-      error: "offline",
-      message: "HITL 没有返回 thread_id。这次没有进入待确认。",
-      recovery: offlineRecovery(),
+      ...(payload ?? {}),
+      thread_state: registered ? thread?.phase : "failed",
+      expires_at: registered ? thread?.expiresAt : undefined,
+      recovery: registered ? [] : ["上游返回的线程已被记成分析流，不能批准。请重新发起 HITL。"],
     },
     requestId,
-    502,
+    registered ? 200 : 409,
   );
 }

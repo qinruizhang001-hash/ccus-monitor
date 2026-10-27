@@ -1,0 +1,107 @@
+{
+  "fixture_id": "ccus-notes-fixture-20261027",
+  "curated_as_of": "2026-10-27",
+  "source": "知识卡",
+  "notes": [
+    {
+      "id": "iso-27914-2026",
+      "title": "ISO 27914:2026 Carbon dioxide capture, transportation and geological storage — Geological storage",
+      "year": 2026,
+      "standard_id": "ISO 27914:2026",
+      "doi": null,
+      "url": "https://www.iso.org/standard/84578.html",
+      "segments": ["storage", "mva"],
+      "themes": ["地质封存", "风险管理", "净封存量"],
+      "takeaway": "2026 年 3 月发布的第 2 版。写地质封存的选址、表征、设计、运行、关闭准备、风险管理和沟通，并加入综合项目管理和净封存二氧化碳质量的量化方法。不适用于终止后阶段、CO2-EOR、临时储罐和埋地容器；若同时有商业烃类生产，适用 ISO 27916。"
+    },
+    {
+      "id": "iso-27914-2017",
+      "title": "ISO 27914:2017 Carbon dioxide capture, transportation and geological storage — Geological storage",
+      "year": 2017,
+      "standard_id": "ISO 27914:2017",
+      "doi": null,
+      "url": "https://www.iso.org/standard/64148.html",
+      "segments": ["storage", "mva"],
+      "themes": ["地质封存", "风险管理"],
+      "status": "withdrawn",
+      "takeaway": "2017 年 10 月发布的第 1 版，已于 2026-03-25 撤销。覆盖选址筛选、表征、设计、运行、关闭准备和风险沟通。不覆盖关闭后、CO2-EOR，以及煤层、玄武岩、页岩和盐穴。"
+    },
+    {
+      "id": "iso-27913-2024",
+      "title": "ISO 27913:2024 Carbon dioxide capture, transportation and geological storage — Pipeline transportation systems",
+      "year": 2024,
+      "standard_id": "ISO 27913:2024",
+      "doi": null,
+      "url": "https://www.iso.org/standard/84840.html",
+      "segments": ["transport"],
+      "themes": ["管道", "密相", "气质"],
+      "takeaway": "2024 年 10 月发布、2025 年 9 月更正的第 2 版。适用于陆上和海上金属管道中的气态与密相二氧化碳，包括既有管道改造、气质和多源混合。不覆盖船运、铁路和公路。标准写的是密相，不要把它换成超临界的同义词。本卡不记录临界温度或临界压力。"
+    },
+    {
+      "id": "csa-z741-12",
+      "title": "CSA Z741:12 (R2022) Geological storage of carbon dioxide",
+      "year": 2012,
+      "standard_id": "CSA Z741:12 (R2022)",
+      "doi": null,
+      "url": "https://www.csagroup.org/store/product/Z741-12/",
+      "segments": ["storage", "mva"],
+      "themes": ["咸水层", "枯竭油气藏", "风险评估"],
+      "takeaway": "2012 年首版，2022 年再确认。面向咸水层和枯竭油气藏的设计、建造、运行、维护和关闭，以及风险评估与沟通。标准本身不规定关闭后年限；未被法规采纳时也不是法律。"
+    },
+    {
+      "id": "cfr-146-subpart-h",
+      "title": "40 CFR Part 146 Subpart H — Class VI wells",
+      "year": 2010,
+      "standard_id": "40 CFR 146 Subpart H",
+      "doi": null,
+      "url": "https://www.law.cornell.edu/cfr/text/40/part-146/subpart-H",
+      "segments": ["storage", "mva"],
+      "themes": ["井完整性", "机械完整性", "测试与监测"],
+      "takeaway": "美国联邦 Class VI 地质封存井规则，2010-12-10 载于联邦公报，40 CFR 144.18 引用 75 FR 77288。目录中与监测直接相关的条款包括 §146.86 建造、§146.89 机械完整性、§146.90 测试与监测、§146.93 注入后场址监护。这是美国联邦法规结构，不是中国许可。"
+    },
+    {
+      "id": "netl-mva-2017",
+      "title": "DOE/NETL-2017/1847 BEST PRACTICES: Monitoring, Verification, and Accounting (MVA) for Geologic Storage Projects",
+      "year": 2017,
+      "standard_id": "DOE/NETL-2017/1847",
+      "doi": null,
+      "url": "https://www.netl.doe.gov/node/5827",
+      "segments": ["mva", "storage"],
+      "themes": ["MVA", "压力", "近地表", "地下"],
+      "takeaway": "2017 年 8 月修订版，修订自 2012/2013 年的手册。主张按风险、按场址选择 MVA，工具覆盖大气、近地表和地下，计划从注入前延续到注入后，并随阶段调整。本卡不把手册正文改写成具体井的压力限值。"
+    },
+    {
+      "id": "ipcc-srccs-2005",
+      "title": "IPCC Special Report on Carbon Dioxide Capture and Storage (2005)",
+      "year": 2005,
+      "standard_id": "IPCC SRCCS 2005",
+      "doi": null,
+      "url": "https://www.ipcc.ch/report/carbon-dioxide-capture-and-storage/",
+      "segments": ["capture", "transport", "storage", "mva"],
+      "themes": ["捕集", "运输", "地质封存", "监测"],
+      "takeaway": "IPCC 2005 年《二氧化碳捕集与封存》特别报告，是捕集、运输、地质封存和监测主题的公开综述。本卡不摘录未在此核对过的临界参数，也不写 DOI。"
+    },
+    {
+      "id": "nordbotten-celia-bachu-2005",
+      "title": "Injection and Storage of CO2 in Deep Saline Aquifers: Analytical Solution for CO2 Plume Evolution During Injection",
+      "year": 2005,
+      "standard_id": "TPM 58:339-360",
+      "doi": "10.1007/s11242-004-0670-9",
+      "url": "https://doi.org/10.1007/s11242-004-0670-9",
+      "segments": ["storage", "mva"],
+      "themes": ["羽流", "Nordbotten", "解析解"],
+      "takeaway": "Nordbotten、Celia 与 Bachu，2005 年 Transport in Porous Media 第 58 卷 339–360 页。在写明的流体和驱替假设下，给出咸水层注入期间二氧化碳羽流的解析解；粘性主导时退化为径向 Buckley–Leverett，用来估计羽流最大展布。本站羽流图只做恒定速率的圆柱体积衡算，不是该文的能量最小化解，也不是油藏模拟器。"
+    },
+    {
+      "id": "spe-225861-ms",
+      "title": "Future Proofing MMV Plans for CCS Through Digital Twins",
+      "year": 2025,
+      "standard_id": "SPE-225861-MS",
+      "doi": "10.2118/225861-ms",
+      "url": "https://doi.org/10.2118/225861-ms",
+      "segments": ["mva", "storage"],
+      "themes": ["数字孪生", "MMV", "情景"],
+      "takeaway": "Debasis P. Das 等，2025-08-25，SPE-225861-MS。讨论把持续更新的存储场址模型放进 MMV，用测量驱动情景模拟，以便更早识别遏制风险。本站没有接入 CMG、Eclipse 或 Visage；情景对比只改教学饱和度。"
+    }
+  ]
+}

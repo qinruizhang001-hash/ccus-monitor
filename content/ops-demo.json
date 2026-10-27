@@ -1,0 +1,60 @@
+{
+  "snapshot_id": "demo-bx-ops-20261026T1440+08",
+  "as_of": "2026-10-26T14:40:00+08:00",
+  "label": "演示质量衡算 / 遏制 / 管完整",
+  "linepack": {
+    "diameter_m": 0.4064,
+    "diameter_note": "16 in × 0.0254，与运输页「16 in」同一条演示管径。",
+    "length_m": 38000,
+    "density_kg_m3": 850,
+    "density_note": "密相教学密度。快照里没有密度计，不能把 850 kg/m³ 写成实测。",
+    "delta_linepack_t": 0,
+    "delta_note": "只有一个密度，本窗口管存变化取 0。"
+  },
+  "imbalance_watch_pct": 2,
+  "imbalance_alarm_pct": 5,
+  "imbalance_threshold_note": "2% 关注、5% 告警是本演示盘的值班阈值，不是法规限值。",
+  "above_zone": {
+    "tag": "AZ-03",
+    "barrier": "secondary_caprock",
+    "value_mpa": 8.4,
+    "watch_mpa": 9.2,
+    "alarm_mpa": 10.0,
+    "note": "盖层上方观测压力。演示点，不是测井解释，也不能单独证明盖层完好。"
+  },
+  "annulus_watch_mpa": 5.0,
+  "annulus_alarm_mpa": 6.5,
+  "annulus_note": "环空绝对压力用 SNAP.annulus，油管压力用 SNAP.whp。ΔP 是两者相减。阈值只约束环空绝对压力。",
+  "microseismic_watch_per_day": 2,
+  "microseismic_alarm_per_day": 5,
+  "dic_watch_pct": 10,
+  "dic_alarm_pct": 15,
+  "esd": [
+    { "tag": "ESD-PS1", "name": "首站 ESD", "state": "armed", "tripped": false },
+    { "tag": "ESD-TS1", "name": "末站 ESD", "state": "armed", "tripped": false },
+    { "tag": "VS-02", "name": "阀室 02", "state": "open", "tripped": false },
+    { "tag": "VS-04", "name": "阀室 04", "state": "alarm", "tripped": false }
+  ],
+  "plume": {
+    "model_id": "demo-radial-volume-20261027",
+    "model_name": "教学径向体积衡算",
+    "style": "常数速率、常数密度、均匀饱和度的圆柱体积。呼应 Nordbotten–Celia–Bachu 2005 粘性主导时的径向展布思路，但不是该文的能量最小化解。",
+    "citation_id": "nordbotten-celia-bachu-2005",
+    "phi": 0.2,
+    "thickness_m": 25,
+    "density_kg_m3": 650,
+    "rate_t_per_h": 112.4,
+    "rate_note": "速率取 SNAP.injTph，并假设教学时间轴上保持不变。不是历史拟合。",
+    "elapsed_hours": 20640,
+    "elapsed_note": "2024-06-18 至 2026-10-26 共 860 天，按 24 h 计为 20640 h。只用于这条教学曲线。",
+    "hours": [720, 2160, 4320, 8760, 17520, 20640],
+    "hour_labels": ["30 d", "90 d", "180 d", "1 a", "2 a", "860 d"],
+    "scenarios": [
+      { "id": "base", "saturation": 0.35, "label": "教学基线 S=0.35" },
+      { "id": "thinner", "saturation": 0.25, "label": "教学对照 S=0.25" }
+    ],
+    "pressure_footprint": null,
+    "pressure_note": "压力影响半径需要渗透率、总压缩系数和粘度。这些没有放进本快照，所以压力足迹是未知/需接入数据源。",
+    "snapshot_plume_note": "SNAP.plumeM 是另一套演示地质模型读数。不要把它写成这条公式的输出。"
+  }
+}

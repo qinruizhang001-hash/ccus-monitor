@@ -1,0 +1,92 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--font-geist-sans), "WenQuanYi Micro Hei", "PingFang SC", "Noto Sans SC",
+    "Microsoft YaHei", sans-serif;
+  --font-mono: var(--font-geist-mono), "WenQuanYi Micro Hei Mono", ui-monospace, monospace;
+  --color-background: #070b10;
+  --color-foreground: #e7eef6;
+  --color-card: #101820;
+  --color-card-foreground: #e7eef6;
+  --color-muted: #182230;
+  --color-muted-foreground: #b7c5d4;
+  --color-border: #243244;
+  --color-primary: #3ee0c5;
+  --color-primary-foreground: #04241e;
+  --color-secondary: #182230;
+  --color-secondary-foreground: #d5e2ef;
+  --color-accent: #e8b339;
+  --color-accent-foreground: #2a1c04;
+  --color-destructive: #ff5d6c;
+  --color-ring: #3ee0c5;
+  --color-ok: #8ef0c4;
+  --color-warn: #ffd36a;
+  --color-alarm: #ffb4bc;
+  --color-info: #c5ddff;
+  --radius-lg: 0.8rem;
+}
+
+* {
+  border-color: var(--color-border);
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  background:
+    radial-gradient(1000px 420px at 0% -10%, rgba(62, 224, 197, 0.08), transparent 55%),
+    radial-gradient(800px 360px at 100% 0%, rgba(232, 179, 57, 0.06), transparent 50%),
+    var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+}
+
+::selection {
+  background: rgba(62, 224, 197, 0.28);
+}
+
+.panel {
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(16, 24, 32, 0.9);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+@keyframes flow {
+  to {
+    stroke-dashoffset: -28;
+  }
+}
+
+.flow-line {
+  stroke-dasharray: 4 7;
+  animation: flow 1.1s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flow-line {
+    animation: none;
+  }
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .print-sheet,
+  .print-sheet * {
+    visibility: visible;
+    color: #111 !important;
+    background: transparent !important;
+  }
+
+  .print-sheet {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    padding: 16px;
+    background: #fff !important;
+  }
+}
